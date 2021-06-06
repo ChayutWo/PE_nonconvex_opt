@@ -76,6 +76,7 @@ q_harm = (1/deltaT)*(q_pot./decline).*log((1+decline.*t)./(1+decline.*t_prev));
 q_g = q_expo;
 q_g(hyper_index) =  q_hyper(hyper_index);
 q_g(harm_index) = q_harm(harm_index);
+q_g = vertcat(q_expo(expo_index), q_hyper(hyper_index), q_harm(harm_index));
 
 b = reshape(t_mat,T*N,1); %auxiliary variable for time constraints
 s = q_nom - sum(reshape(q_g,T,N),2); %auxiliary variable for nomination constraints

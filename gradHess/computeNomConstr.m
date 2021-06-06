@@ -18,10 +18,10 @@ f_nom = q_nom - sum_q_g - s;
 g_nom = zeros(length(x),T);
 for j = 1:T
     grad = zeros(T,1);
-    grad(j) = -deltaT;
+    grad(j) = -deltaT; %partial derivative with respect to q_g_i^(j)
     grad = repmat(grad, N, 1);
     g_nom(:,j) = vertcat(grad, zeros(length(x)-N*T,1));
-    g_nom(3*N*T+j,j) = -1;
+    g_nom(3*N*T+j,j) = -1; %partial derivative with respect to s
 end
 
 %0 hessian: 3NT+T x 3NT+T x T

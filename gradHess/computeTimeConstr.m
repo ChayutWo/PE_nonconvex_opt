@@ -21,12 +21,12 @@ g_time = zeros(length(x),N*T);
 for i = 1:N
     for j = 1:T
         if j == 1
-            g_time(N*T+T*(i-1) + j,((i-1)*T+j)) = 1;
-            g_time(2*N*T+T*(i-1) + j,((i-1)*T+j)) = -1;
+            g_time(N*T+T*(i-1) + j,((i-1)*T+j)) = 1; % wrt t_i^(j)
+            g_time(2*N*T+T*(i-1) + j,((i-1)*T+j)) = -1; % wrt b
         else
-            g_time(N*T+T*(i-1) + j-1,((i-1)*T+j)) = -1;
-            g_time(N*T+T*(i-1) + j,((i-1)*T+j)) = 1;
-            g_time(2*N*T+T*(i-1) + j,((i-1)*T+j)) = -1;
+            g_time(N*T+T*(i-1) + j-1,((i-1)*T+j)) = -1; % wrt t_i^(j-1)
+            g_time(N*T+T*(i-1) + j,((i-1)*T+j)) = 1; % wrt t_i^(j)
+            g_time(2*N*T+T*(i-1) + j,((i-1)*T+j)) = -1; % wrt b
         end
     end
 end
