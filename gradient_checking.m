@@ -2,24 +2,34 @@
 
 clc
 clear all
-
-N = 3; %number of wells
+N_exponential = 1;
+N_hyperbolic = 1;
+N_harmonic = 1;
+N = N_exponential + N_hyperbolic + N_harmonic; %number of wells
 T = 5; %number of time steps
 
 %generate a simple setting and randomly set initialization
-[x,functionParams,params,l,u] = gen_case_1(N,T);
+[x,functionParams,params,l,u] = gen_case_1(N_exponential, N_hyperbolic, N_harmonic, T);
 x = x + rand(length(x),1); %perturb x so that it is not feasible
+
+%generate a unit vector of direction h
 h = rand(length(x),1)-0.5;
 h = h/norm(h);
-error = [];
+
+
 %eval = @computeTimeConstr;
 %eval = @computeNomConstr;
-eval = @computeHarmonicConstr;
+%eval = @computeExponentialConstr;
+eval = @computeHyperbolicConstr;
+%eval = @computeHarmonicConstr;
 %eval = @combineConst;
 %eval = @computeObjGradHess;
+
+%perform numerical gradient checking
+error = [];
 for n = 1:21
-    epsilon = 10^(-n+11);
-    x_new = x + epsilon*h;
+    epsilon = 10^(-n+11); % step size from 1e-10 to 1e10
+    x_new = x + epsilon*h; % perturb x from starting value: x_new
     [ f, g, B] = eval( x, params );
     size(g)
     size(B)
@@ -34,7 +44,10 @@ ylabel('log ||\nabla f(x)^Th - (f(x+\epsilon h) - f(x))/\epsilon||');
 title('First order approximation error');
 ax = gca; 
 ax.FontSize = 11;
-for n = 1:21
+
+%perform numerical Hessian checking
+error = [];
+for n =  1:21
     epsilon = 10^(-n+11);
     x_new = x + epsilon*h;
     [ f, g, B] = eval( x, params );
