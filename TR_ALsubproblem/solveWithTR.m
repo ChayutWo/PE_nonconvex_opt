@@ -33,12 +33,14 @@ while ( k < max_TR_iterations)
         return;
     end
         
-    %Solve subproblem - need to change this
+    % Solve TR subproblem
+    % calculate lower bound and upper bound taken into account TR size
+    % (l_infinity norm)
     lower_bound = max(l,x-delta(k)*ones(length(x),1));
     upper_bound = min(u, x+delta(k)*ones(length(x),1));
     x_new = getCauchypoint(x,lower_bound,upper_bound,B,g-B*x);
     x_new = CG_subproblem(x_new,lower_bound,upper_bound, B,g-B*x);
-    p = x_new-x;        
+    p = x_new-x; % TR step   
     
     % Size the trust region appropriately
     m1= g'*p + 1/2*p'*B*p; %expected reduction
@@ -46,11 +48,14 @@ while ( k < max_TR_iterations)
     rho(k) = -(fprev-f)/m1;
     
     if rho(k) < 1/4
+        % poor approximation within TR, reduce TR size
         delta(k+1) = 1/4 * delta(k);
     else
         if (rho(k) > 3/4 && max(p) == delta(k))
+            % good quadratic approximation and hit the bound
             delta(k+1) = min(2*delta(k), delta_max);
         else
+            % otherwise, keep TR size unchanged
             delta(k+1)=delta(k);
         end
     end
