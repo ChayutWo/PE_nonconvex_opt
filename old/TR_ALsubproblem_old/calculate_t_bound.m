@@ -11,7 +11,7 @@ for i = 1:length(x)
         t_bound(i) = (x(i)-l(i))/g(i);
     end
 end
-t_sorted = unique(t_bound);
+t_sorted = unique(sort(t_bound));
 
 if t_sorted(1) == 0
     % no need to keep 0 as it hits the boundary right away

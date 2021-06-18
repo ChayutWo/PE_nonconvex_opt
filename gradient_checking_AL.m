@@ -2,6 +2,7 @@
 
 clc
 clear all
+rng(0)
 N_exponential = 1;
 N_hyperbolic = 1;
 N_harmonic = 1;
@@ -16,7 +17,7 @@ x = x + rand(length(x),1); %perturb x so that it is not feasible
 h = rand(length(x),1)-0.5;
 h = h/norm(h);
 
-eval = @ALagrangian;
+eval = @ALagrangian_fgB;
 %perform numerical gradient checking
 error = [];
 for n = 1:13
@@ -43,7 +44,7 @@ for n = 1:13
     [ f, g, B] = eval( x, functionParams , params );
     [ f_new, g_new, B_new] = eval( x_new, functionParams , params );
     %error(n) = norm(epsilon*B(:,:,1)*h - (g_new(:,1)-g(:,1)));
-    error(n) = norm(B(:,:,1)*h - (g_new(:,1)-g(:,1))/epsilon);
+    error(n) = norm(B*h - (g_new-g)/epsilon);
 end
 figure
 plot(linspace(-10,2,13),flip(log10(error)),'LineWidth',2)

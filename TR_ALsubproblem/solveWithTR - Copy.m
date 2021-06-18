@@ -22,23 +22,27 @@ error(1:max_TR_iterations)=0; %store error from KKT condition
 
 k=1;
 [fprev]= evalAL_f( x, functionParams , params);
+time_pre =  zeros(max_TR_iterations,1);
+time_bound = zeros(max_TR_iterations,1);
+time_Cauchy =  zeros(max_TR_iterations,1);
+time_CG =  zeros(max_TR_iterations,1);
+time_post =  zeros(max_TR_iterations,1);
 while ( k < max_TR_iterations)
     [~, g, B ]= evalAL_fgB( x, functionParams , params);
     %Check error
-    %[KKT_error] = computeKKT_AL(x,functionParams,params,l,u);
-    KKT_error = norm(x - project(x-g,l,u));
+    [KKT_error] = computeKKT_AL(x,functionParams,params,l,u);
     error(k)=KKT_error;
     if (KKT_error<=tol)
         return;
     end
+        
     % Solve TR subproblem
     % calculate lower bound and upper bound taken into account TR size
     % (l_infinity norm)
     lower_bound = max(l,x-delta(k)*ones(length(x),1));
     upper_bound = min(u, x+delta(k)*ones(length(x),1));
-    temp = g-B*x;
-    x_new = getCauchypoint(x,lower_bound,upper_bound,B,temp);
-    x_new = CG_subproblem(x_new,lower_bound,upper_bound, B,temp);
+    x_new = getCauchypoint(x,lower_bound,upper_bound,B,g-B*x);
+    x_new = CG_subproblem(x_new,lower_bound,upper_bound, B,g-B*x);
     p = x_new-x; % TR step   
     
     % Size the trust region appropriately
